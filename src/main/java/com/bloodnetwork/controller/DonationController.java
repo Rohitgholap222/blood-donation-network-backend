@@ -24,7 +24,7 @@ public class DonationController {
     @PreAuthorize("hasRole('HOSPITAL')")
     public ResponseEntity<ApiResponse<DonationRequest>> createRequest(
             @Valid @RequestBody DonationRequestDto requestDto,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
             
         User hospital = userDetails.getUser();
         DonationRequest request = donationRequestService.createRequest(requestDto, hospital);
