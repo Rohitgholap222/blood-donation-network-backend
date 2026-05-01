@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DonorResponseDto {
+public class DonorResponseDto implements java.io.Serializable {
     private Long id;
     private String name;
     private String phone;
