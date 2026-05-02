@@ -2,10 +2,14 @@ package com.bloodnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "donation_requests")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,10 +38,12 @@ public class DonationRequest {
     private String status; // PENDING, FULFILLED, CANCELLED
 
     private LocalDateTime requiredBy;
+    
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 }
