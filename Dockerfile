@@ -8,7 +8,8 @@ COPY src ./src
 RUN mvn package -DskipTests -B
 
 # Stage 2: Runtime
-FROM openjdk:17-jdk-slim
+# Using eclipse-temurin as openjdk:17-jdk-slim is deprecated
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Install curl for healthcheck and clean up
