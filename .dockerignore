@@ -1,21 +1,32 @@
+# Ignore build artifacts
 target/
 !target/*.jar
+
+# Ignore git
 .git/
 .gitignore
-.mvn/
-mvnw
-mvnw.cmd
-pom.xml
-Dockerfile
-.dockerignore
-node_modules/
-bin/
-logs/
-*.log
+
+# Ignore local environment files
 .env
+.env.*
+
+# Ignore IDE settings
 .idea/
 .vscode/
 *.iml
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore documentation
 *.md
-postman.json
-docker-compose.yml
+HELP.md
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Do NOT ignore pom.xml or src/ (these are needed for the build)
+# pom.xml
+# src/

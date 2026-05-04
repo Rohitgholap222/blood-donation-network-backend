@@ -1,14 +1,16 @@
 # Stage 1: Build
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
+
+# Copy pom.xml and download dependencies (cached layer)
 COPY pom.xml .
-# Download dependencies first to leverage Docker cache
 RUN mvn dependency:go-offline -B
+
+# Copy source and build
 COPY src ./src
 RUN mvn package -DskipTests -B
 
 # Stage 2: Runtime
-# Using eclipse-temurin as openjdk:17-jdk-slim is deprecated
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
@@ -22,8 +24,8 @@ RUN apt-get update && \
 RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
-# Copy only the built JAR from the build stage
-COPY --from=build /app/target/smart-blood-network-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR using a wildcard to avoid hardcoding the version
+COPY --from=build /app/target/*.jar app.jar
 
 # Dynamic port handling (Render will provide PORT)
 ENV PORT=8080
