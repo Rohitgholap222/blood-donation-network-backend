@@ -11,16 +11,20 @@ RUN mvn package -DskipTests -B
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 
+# Install curl for healthcheck and clean up
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Optimization: Run as non-root user for security
 RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 # Copy only the built JAR from the build stage
-# Renaming to app.jar for simplicity
 COPY --from=build /app/target/smart-blood-network-0.0.1-SNAPSHOT.jar app.jar
 
-# Dynamic port handling
-# Spring Boot will automatically use the PORT env var because of server.port=${PORT:8080} in application.properties
+# Dynamic port handling (Render will provide PORT)
 ENV PORT=8080
 EXPOSE ${PORT}
 
