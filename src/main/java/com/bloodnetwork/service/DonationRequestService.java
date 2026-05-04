@@ -41,4 +41,26 @@ public class DonationRequestService {
 
         return request;
     }
+
+    @Transactional
+    public void fulfillRequest(Long requestId, User donor) {
+        DonationRequest request = donationRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        
+        if (!"PENDING".equals(request.getStatus())) {
+            throw new RuntimeException("Request is not pending");
+        }
+        
+        request.setStatus("FULFILLED");
+        request.setDonor(donor);
+        donationRequestRepository.save(request);
+    }
+
+    public java.util.List<DonationRequest> getRequestsByHospital(Long hospitalId) {
+        return donationRequestRepository.findByHospitalId(hospitalId);
+    }
+
+    public java.util.List<DonationRequest> getRequestsByDonor(Long donorId) {
+        return donationRequestRepository.findByDonorId(donorId);
+    }
 }

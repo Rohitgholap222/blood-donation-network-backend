@@ -23,6 +23,11 @@ public class DonationRequest {
     @JoinColumn(name = "hospital_id", nullable = false)
     private User hospital;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "donor_id")
+    private User donor;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BloodGroup bloodGroup;

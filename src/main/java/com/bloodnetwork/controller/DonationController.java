@@ -27,7 +27,23 @@ public class DonationController {
             @io.swagger.v3.oas.annotations.Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
             
         User hospital = userDetails.getUser();
-        DonationRequest request = donationRequestService.createRequest(requestDto, hospital);
         return ResponseEntity.ok(new ApiResponse<>(true, "Donation request created", request));
+    }
+
+    @PostMapping("/fulfill/{requestId}")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<ApiResponse<Void>> fulfillRequest(
+            @PathVariable Long requestId,
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
+        donationRequestService.fulfillRequest(requestId, userDetails.getUser());
+        return ResponseEntity.ok(new ApiResponse<>(true, "Request fulfilled successfully", null));
+    }
+
+    @GetMapping("/my-donations")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<ApiResponse<java.util.List<DonationRequest>>> getMyDonations(
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
+        java.util.List<DonationRequest> donations = donationRequestService.getRequestsByDonor(userDetails.getUser().getId());
+        return ResponseEntity.ok(new ApiResponse<>(true, "Donation history retrieved", donations));
     }
 }

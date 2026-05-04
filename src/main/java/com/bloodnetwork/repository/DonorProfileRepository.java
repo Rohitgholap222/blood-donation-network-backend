@@ -12,7 +12,7 @@ public interface DonorProfileRepository extends JpaRepository<DonorProfile, Long
 
     @Query(value = "SELECT dp.* FROM donor_profiles dp " +
             "WHERE dp.blood_group IN :bloodGroups AND dp.is_available = true " +
-            "AND (dp.last_donation_date IS NULL OR DATEDIFF(CURDATE(), dp.last_donation_date) >= 90) " +
+            "AND (dp.last_donation_date IS NULL OR CURRENT_DATE - dp.last_donation_date >= 90) " +
             "ORDER BY (6371 * acos(cos(radians(:lat)) * cos(radians(dp.latitude)) * " +
             "cos(radians(dp.longitude) - radians(:lng)) + sin(radians(:lat)) * " +
             "sin(radians(dp.latitude)))) ASC LIMIT :limit", nativeQuery = true)

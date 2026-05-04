@@ -33,4 +33,24 @@ public class DonorService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public DonorProfile getProfileByUserId(Long userId) {
+        return donorProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Donor profile not found"));
+    }
+
+    @Transactional
+    public void updateProfile(Long userId, com.bloodnetwork.dto.DonorProfileUpdateRequest updateRequest) {
+        DonorProfile profile = getProfileByUserId(userId);
+        
+        if (updateRequest.getLatitude() != null) profile.setLatitude(updateRequest.getLatitude());
+        if (updateRequest.getLongitude() != null) profile.setLongitude(updateRequest.getLongitude());
+        if (updateRequest.getIsAvailable() != null) profile.setIsAvailable(updateRequest.getIsAvailable());
+        if (updateRequest.getBloodGroup() != null) {
+            profile.setBloodGroup(com.bloodnetwork.entity.BloodGroup.valueOf(updateRequest.getBloodGroup()));
+        }
+        
+        donorProfileRepository.save(profile);
+    }
 }
