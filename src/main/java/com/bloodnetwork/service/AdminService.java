@@ -23,7 +23,7 @@ public class AdminService {
                 .totalDonors(userRepository.countByRole(Role.DONOR))
                 .totalHospitals(userRepository.countByRole(Role.HOSPITAL))
                 .activeRequests(donationRequestRepository.countByStatus("PENDING"))
-                .successfulDonations(donationRequestRepository.countByStatus("COMPLETED"))
+                .successfulDonations(donationRequestRepository.countByStatus("FULFILLED"))
                 .build();
     }
 
