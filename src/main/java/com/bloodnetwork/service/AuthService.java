@@ -70,7 +70,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("Invalid credentials"));
 
         CustomUserDetails userDetails = new CustomUserDetails(user);

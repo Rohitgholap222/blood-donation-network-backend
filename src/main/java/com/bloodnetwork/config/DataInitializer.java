@@ -36,27 +36,43 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("Checking Admin account seeding status...");
+        
         if (!adminSeedEnabled) {
-            log.info("Admin seed is disabled.");
+            log.info("Admin seed is DISABLED. Set ADMIN_SEED_ENABLED=true if you want to create the default admin.");
             return;
         }
 
         if (!StringUtils.hasText(adminPassword)) {
+            log.error("ADMIN_PASSWORD is empty! Cannot seed admin account.");
             throw new IllegalStateException("ADMIN_PASSWORD is required when ADMIN_SEED_ENABLED=true");
         }
 
-        if (userRepository.findByEmail(adminEmail).isEmpty()) {
-            User admin = User.builder()
-                    .name(adminName)
-                    .email(adminEmail)
-                    .password(passwordEncoder.encode(adminPassword))
-                    .phone(adminPhone)
-                    .role(Role.ADMIN)
-                    .build();
-            
-            userRepository.save(admin);
-            log.info("Default Admin account created successfully!");
-            log.info("Email: {}", adminEmail);
-        }
+        userRepository.findByEmailIgnoreCase(adminEmail).ifPresentOrElse(
+            existingUser -> {
+                log.info("User with email {} already exists.", adminEmail);
+                if (existingUser.getRole() != Role.ADMIN) {
+                    log.warn("Existing user {} has role {}, upgrading to ADMIN...", adminEmail, existingUser.getRole());
+                    existingUser.setRole(Role.ADMIN);
+                    userRepository.save(existingUser);
+                    log.info("Admin role granted to {}", adminEmail);
+                } else {
+                    log.info("Admin account {} is already configured correctly.", adminEmail);
+                }
+            },
+            () -> {
+                log.info("Creating default Admin account for email: {}", adminEmail);
+                User admin = User.builder()
+                        .name(adminName)
+                        .email(adminEmail)
+                        .password(passwordEncoder.encode(adminPassword))
+                        .phone(adminPhone)
+                        .role(Role.ADMIN)
+                        .build();
+                
+                userRepository.save(admin);
+                log.info("Default Admin account created successfully!");
+            }
+        );
     }
 }
