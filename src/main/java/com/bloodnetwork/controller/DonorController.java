@@ -28,4 +28,20 @@ public class DonorController {
         List<DonorResponseDto> donors = donorService.getNearestDonors(bloodGroup, latitude, longitude, limit);
         return ResponseEntity.ok(new ApiResponse<>(true, "Nearest donors retrieved", donors));
     }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<ApiResponse<DonorResponseDto>> getProfile(
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) @org.springframework.security.core.annotation.AuthenticationPrincipal com.bloodnetwork.security.CustomUserDetails userDetails) {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Profile retrieved", donorService.getMyProfile(userDetails.getUser().getId())));
+    }
+
+    @PutMapping("/profile")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<ApiResponse<Void>> updateProfile(
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) @org.springframework.security.core.annotation.AuthenticationPrincipal com.bloodnetwork.security.CustomUserDetails userDetails,
+            @RequestBody com.bloodnetwork.dto.DonorProfileUpdateRequest updateRequest) {
+        donorService.updateProfile(userDetails.getUser().getId(), updateRequest);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Profile updated successfully", null));
+    }
 }

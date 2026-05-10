@@ -47,4 +47,10 @@ public class DonationController {
         java.util.List<DonationRequest> donations = donationRequestService.getRequestsByDonor(userDetails.getUser().getId());
         return ResponseEntity.ok(new ApiResponse<>(true, "Donation history retrieved", donations));
     }
+
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('DONOR')")
+    public ResponseEntity<ApiResponse<java.util.List<DonationRequest>>> getPendingRequests() {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Pending requests retrieved", donationRequestService.getAllPendingRequests()));
+    }
 }

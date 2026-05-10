@@ -63,4 +63,8 @@ public class DonationRequestService {
     public java.util.List<DonationRequest> getRequestsByDonor(Long donorId) {
         return donationRequestRepository.findByDonorId(donorId);
     }
+
+    public java.util.List<DonationRequest> getAllPendingRequests() {
+        return donationRequestRepository.findByStatus("PENDING");
+    }
 }

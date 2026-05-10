@@ -26,10 +26,12 @@ public class DonorService {
                 .map(profile -> DonorResponseDto.builder()
                         .id(profile.getId())
                         .name(profile.getUser().getName())
+                        .email(profile.getUser().getEmail())
                         .phone(profile.getUser().getPhone())
                         .bloodGroup(profile.getBloodGroup().name())
                         .latitude(profile.getLatitude())
                         .longitude(profile.getLongitude())
+                        .isAvailable(profile.getIsAvailable())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -52,5 +54,20 @@ public class DonorService {
         }
         
         donorProfileRepository.save(profile);
+    }
+
+    @Transactional(readOnly = true)
+    public DonorResponseDto getMyProfile(Long userId) {
+        DonorProfile profile = getProfileByUserId(userId);
+        return DonorResponseDto.builder()
+                .id(profile.getId())
+                .name(profile.getUser().getName())
+                .email(profile.getUser().getEmail())
+                .phone(profile.getUser().getPhone())
+                .bloodGroup(profile.getBloodGroup().name())
+                .latitude(profile.getLatitude())
+                .longitude(profile.getLongitude())
+                .isAvailable(profile.getIsAvailable())
+                .build();
     }
 }

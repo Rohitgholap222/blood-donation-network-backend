@@ -30,7 +30,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmailIgnoreCase(request.getEmail()).isPresent()) {
             throw new BadRequestException("Email already in use");
         }
 
