@@ -27,6 +27,7 @@ public class DonationController {
             @io.swagger.v3.oas.annotations.Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
             
         User hospital = userDetails.getUser();
+        DonationRequest request = donationRequestService.createRequest(requestDto, hospital);
         return ResponseEntity.ok(new ApiResponse<>(true, "Donation request created", request));
     }
 
